@@ -1,25 +1,36 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
-import './App.css';
+import styles from './App.module.css';
 
 const App: React.FC = () => {
   const webcamRef = useRef<Webcam>(null);
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<string | undefined>(undefined);
+  const [loadingDevices, setLoadingDevices] = useState<boolean>(true);
+  const [deviceError, setDeviceError] = useState<string | null>(null);
 
   const handleDevices = useCallback(
-    (mediaDevices: MediaDeviceInfo[]) =>
-      setDevices(mediaDevices.filter(({ kind }) => kind === 'videoinput')),
-    [setDevices]
+    (mediaDevices: MediaDeviceInfo[]) => {
+      setDevices(mediaDevices.filter(({ kind }) => kind === 'videoinput'));
+      setLoadingDevices(false);
+    },
+    [setDevices, setLoadingDevices]
   );
 
   useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then(handleDevices);
+    setLoadingDevices(true);
+    setDeviceError(null);
+    navigator.mediaDevices.enumerateDevices()
+      .then(handleDevices)
+      .catch(err => {
+        console.error("Error enumerating devices:", err);
+        setDeviceError(`Failed to enumerate devices: ${err.message}`);
+        setLoadingDevices(false);
+      });
   }, [handleDevices]);
 
-  const capture = useCallback(()
-    : void => {
+  const capture = useCallback((): void => {
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
       setImgSrc(imageSrc);
@@ -31,20 +42,22 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className={styles.App}>
+      <header className={styles.AppHeader}>
         <h1>Webcam Capture</h1>
-        <div className="webcam-container">
+        <div className={styles.webcamContainer}>
           <Webcam
             audio={false}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
             videoConstraints={{ deviceId: selectedDevice }}
-            className="webcam"
+            className={styles.webcam}
           />
-          <div className="controls">
-            {devices.length > 0 && (
-              <select onChange={handleDeviceChange} value={selectedDevice} className="device-select">
+          <div className={styles.controls}>
+            {loadingDevices && <p>Loading cameras...</p>}
+            {deviceError && <p style={{ color: 'red' }}>{deviceError}</p>}
+            {!loadingDevices && !deviceError && devices.length > 0 && (
+              <select onChange={handleDeviceChange} value={selectedDevice} className={styles.deviceSelect}>
                 <option value="">Select Camera</option>
                 {devices.map((device, key) => (
                   <option key={key} value={device.deviceId}>
@@ -53,13 +66,15 @@ const App: React.FC = () => {
                 ))}
               </select>
             )}
-            <button onClick={capture} className="capture-button">Capture photo</button>
+            {!loadingDevices && !deviceError && devices.length === 0 && <p>No cameras found.</p>}
+            <button onClick={capture} className={styles.captureButton} disabled={loadingDevices || !!deviceError}>Capture photo</button>
           </div>
         </div>
         {imgSrc && (
-          <div className="screenshot-container">
+          <div className={styles.screenshotContainer}>
             <h2>Screenshot</h2>
-            <img src={imgSrc} alt="Screenshot" className="screenshot-image" />
+            <img src={imgSrc} alt="Screenshot" className={styles.screenshotImage} />
+            <button onClick={() => setImgSrc(null)} style={{ marginTop: '10px' }}>Clear Screenshot</button>
           </div>
         )}
       </header>

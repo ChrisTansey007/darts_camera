@@ -1,46 +1,108 @@
-# Getting Started with Create React App
+# Webcam Capture App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A simple application for capturing images from your webcam using React, Electron, and a Node.js backend. This project was initially bootstrapped with Create React App and then configured for Electron.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+*   Display live webcam feed.
+*   Select from available camera devices.
+*   Capture screenshots from the webcam.
+*   View captured screenshots.
+*   Backend server for (future) image storage and management.
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+*   **Frontend:** React (with TypeScript), Create React App
+*   **Desktop Framework:** Electron
+*   **Backend:** Node.js, Express.js
+*   **Styling:** CSS Modules
+*   **Key Libraries:**
+    *   `react-webcam` for webcam access in React.
+    *   `electron-is-dev`, `electron-debug` for Electron development.
+    *   `multer` for file uploads on the backend.
+    *   `helmet`, `express-rate-limit` for backend security.
+    *   `concurrently`, `wait-on` for managing development processes.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Project Structure Overview
 
-### `npm test`
+```
+webcam-capture-app/
+├── backend/              # Node.js Express backend
+│   ├── uploads/          # Directory for uploaded images (auto-created)
+│   ├── package.json
+│   └── server.js
+├── build/                # React production build (generated)
+├── dist/                 # Electron packaged application (generated)
+├── node_modules/
+├── public/               # Static assets for React app & Electron main process files
+│   ├── electron.js       # Electron main process script
+│   ├── preload.js        # Electron preload script
+│   ├── index.html
+│   └── ...
+├── src/                  # React application source code
+│   ├── App.module.css    # Styles for App component
+│   ├── App.tsx           # Main React App component
+│   └── ...
+├── .env.development      # (Optional) Environment variables for development
+├── .env.production       # (Optional) Environment variables for production
+├── camera_code.txt       # Original setup guide with more details
+├── package.json          # Root (frontend & Electron) package configuration
+└── README.md             # This file
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Setup Instructions
 
-### `npm run build`
+1.  **Clone the repository.**
+2.  **Install Root Dependencies:**
+    Navigate to the project root (`webcam-capture-app/`) and run:
+    ```bash
+    npm install
+    ```
+3.  **Install Backend Dependencies:**
+    Navigate to the backend directory (`webcam-capture-app/backend/`) and run:
+    ```bash
+    npm install
+    ```
+    *(Note: In some sandboxed execution environments, `npm install` might time out. The `package.json` files correctly list all dependencies.)*
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Development Mode
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+To run the application in development mode (with live reload for frontend and backend):
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+From the project root (`webcam-capture-app/`):
+```bash
+npm run electron:dev
+```
+This command concurrently:
+*   Starts the React development server (on http://localhost:3000).
+*   Starts the Node.js backend server (on http://localhost:3001, with `nodemon`).
+*   Starts the Electron application once both servers are ready.
 
-### `npm run eject`
+### Running Backend Separately (Optional)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+If you need to run only the backend server:
+Navigate to `webcam-capture-app/backend/`:
+```bash
+npm start
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Building for Production
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+To build the React app and package the Electron application for your current platform:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+From the project root (`webcam-capture-app/`):
+```bash
+npm run electron:build
+```
+The packaged application will be found in the `dist/` directory.
 
-## Learn More
+## Linting
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+To check for code quality issues in the frontend:
+```bash
+npm run lint
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Further Details
+
+For more advanced features, deployment options (like Docker), testing strategies, and troubleshooting, please refer to the `camera_code.txt` file included in this repository. That file served as the initial comprehensive guide for setting up this project.
