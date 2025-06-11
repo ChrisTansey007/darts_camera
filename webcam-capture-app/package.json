@@ -1,0 +1,89 @@
+{
+  "name": "webcam-capture-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Webcam Capture Application built with React, Electron, and Node.js backend.",
+  "author": "Your Name or Company <your.email@example.com>",
+  "dependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.126",
+    "@types/react": "^19.1.7",
+    "@types/react-dom": "^19.1.6",
+    "electron-is-dev": "^3.0.1",
+    "form-data": "^4.0.3",
+    "node-fetch": "^3.3.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-scripts": "5.0.1",
+    "react-webcam": "^7.2.0",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint src/**/*.{ts,tsx}",
+    "server:dev": "cd backend && npm start",
+    "electron:dev": "npx concurrently \"npx cross-env BROWSER=none npm start\" \"npm run server:dev\" \"npx wait-on http://localhost:3000 http://localhost:3001 && electron .\"",
+    "electron:build": "npm run build && electron-builder"
+  },
+  "main": "public/electron.js",
+  "homepage": "./",
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^36.4.0",
+    "electron-builder": "^26.0.12",
+    "electron-debug": "^3.2.0",
+    "wait-on": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.yourcompany.webcamcaptureapp",
+    "productName": "Webcam Capture App",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "public/electron.js",
+      "public/preload.js"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "mac": {
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.photography"
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": "nsis"
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": "AppImage"
+    }
+  }
+}
